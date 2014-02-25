@@ -15,26 +15,30 @@ int main( int argc, char *argv[] )
     int name_len;
     MPI_Get_processor_name(processor_name, &name_len);
 
-    int count = 0;
-
 	int n = atoi(argv[1]);
-    int range;
-    if(n % numprocs)
+    int range = n / numprocs;
+    int intComp = 0;
+    if(myid==numprocs-1)
     {
-        range = n / (numprocs-1);
-        if(myid == numprocs-1)
-        {
-            range = n - ( (numprocs-1) * range );
-        }
-    } else {
-        range = n / numprocs;
+        intComp += n - numprocs*range; // compensate the int error
     }
 
-    // calculo de primo
-    int start = ( n / numprocs ) * myid + 1;
+    // prime calculation
+    int count = 0;
+    int start =  range * myid + 1;
+
+    if(start==1) start++; // skip the first test
+    if(start+range==n) range--; // skip the last test
+
+    int i;
+    for(i=start;i<start+range+intComp;i++)
+    {
+        if( ! (n%i) )
+            count++;
+    }
     //
 
-	printf ("[%s] %d of %d: %d start:%d\n", processor_name, myid, numprocs, range, start);
+	printf ("[%s] %d of %d: range:%d start:%d\n", processor_name, myid, numprocs, range+intComp, start);
 
     if(myid!=0) // i am a cluster
     {
