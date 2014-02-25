@@ -15,6 +15,9 @@ int main( int argc, char *argv[] )
     int name_len;
     MPI_Get_processor_name(processor_name, &name_len);
 
+    double starttime, endtime;
+    starttime = MPI_Wtime();
+
 	int n = atoi(argv[1]);
     int range = n / numprocs;
     int intComp = 0;
@@ -28,7 +31,7 @@ int main( int argc, char *argv[] )
     int start =  range * myid + 1;
 
     if(start==1) start++; // skip the first test
-    if(start+range==n) range--; // skip the last test
+    if(start+range>=n) range = n - start;  // skip the last test. BUGFIX: Single rank range error.
 
     int i;
     for(i=start;i<start+range+intComp;i++)
@@ -50,8 +53,12 @@ int main( int argc, char *argv[] )
             MPI_Recv(&count, 1, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             sum += count;
         }
-        printf("Divisores: %d\n", sum);
+        printf("Total: %d\n", sum);
     }
+
+    endtime   = MPI_Wtime();
+    if(!myid)
+        printf("That took %f seconds\n",endtime-starttime);
 
 	MPI_Finalize();
 	return 0;
