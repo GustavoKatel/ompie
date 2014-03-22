@@ -66,48 +66,27 @@ int main( int argc, char *argv[] )
 
 int dividers(int n)
 {
-
-    int range;
-    int start=2;
-    if(n<numprocs)
-    {
-        if(myid==0)
-            range = n;
-        else
-            range = 0;
-    } else {
-
-        range = n / numprocs;
-        if(n%2==1)
-            range = (n+1) / numprocs;
-
-        start = range * myid + 1;
-
-        if( myid == 0 && n%2==1 )
-        {
-            if(range*numprocs<n)
-                range++;
-            else if(range*numprocs>n)
-                range--;
-        }
-        
-    }
-
     int count = 0;
-    int i;
-
-    for(i=start;i<start+range;i++)
+    int range = 0;
+    int start = 2;
+    
+    if(n < numprocs)
     {
-        if(i==1 || i==n)
-            continue;
-        if( n%i == 0 )
-        {
-            count++;
-        }
+        if(myid < n) range = 1;
+    } else {
+	range = (n % 2 == 0 ? n : (n + 1)) / numprocs;
+
+        if((myid == 0)&&(n % 2 == 1)) {
+            if(range * numprocs < n) range++;
+            else if(range * numprocs > n) range--;
+        }        
     }
 
-    // printf("[%d] start: %d, range: %d, count: %d\n", myid, start, range, count);
+    start = range * myid + 1;
+
+    for(int i = start; i < (start + range); i++)
+        if((i > 1)&&(i < n)&&(n % i == 0))
+            count++;
 
     return count;
-
 }
