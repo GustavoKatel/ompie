@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include "mpi.h"
 
+typedef double T_LONG_DOUBLE;
+typedef int T_LONG_INT;
+
 int myid, numprocs;
 char processor_name[MPI_MAX_PROCESSOR_NAME];
 int name_len;
@@ -9,7 +12,7 @@ int name_len;
 /*
 *  range_reduce: It will divide n as good as possible to balance the clusters
 */
-void range_reduce(long int n, long int *start_ptr, long int *range_ptr);
+void range_reduce(T_LONG_INT n, T_LONG_INT *start_ptr, T_LONG_INT *range_ptr);
 
 /*
 * Math functions
@@ -28,7 +31,7 @@ typedef double (*t_func) (double x);
 /*
 * Monte carlo simplification for per cluster usage
 */
-long double monte_carlo_slice(double min, double max, t_func func, long int samples);
+T_LONG_DOUBLE monte_carlo_slice(double min, double max, t_func func, T_LONG_INT samples);
 
 /*
 * Test functions
@@ -52,12 +55,12 @@ int main(int argc, char *argv[])
     // get the min and max limits 
     double min = atof(argv[1]);
     double max = atof(argv[2]);
-    long int samples = atol(argv[3]);
+    T_LONG_INT samples = atol(argv[3]);
 
-    long int samples_per_rank;
+    T_LONG_INT samples_per_rank;
     range_reduce(samples, NULL, &samples_per_rank);
 
-    long double sum_per_rank=0, sum_global=0, result=0;
+    T_LONG_DOUBLE sum_per_rank=0, sum_global=0, result=0;
 
     // starts the timer
     double starttime, endtime;
@@ -69,7 +72,7 @@ int main(int argc, char *argv[])
 
     // printf("[%d] sum_per_rank: %Le\n", myid, sum_per_rank); 
   
-    MPI_Allreduce(&sum_per_rank, &sum_global, 1, MPI_LONG_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    MPI_Allreduce(&sum_per_rank, &sum_global, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
     // reduce?
     result = ( max - min  ) * ( sum_global / samples );
@@ -78,7 +81,7 @@ int main(int argc, char *argv[])
 
     if(!myid)
     {
-        printf("Resultado: %Le\n", result);
+        printf("Resultado: %lf\n", result);
     }
 
     if(!myid)
@@ -92,10 +95,10 @@ int main(int argc, char *argv[])
 
 }
 
-void range_reduce(long int n, long int *start_ptr, long int *range_ptr)
+void range_reduce(T_LONG_INT n, T_LONG_INT *start_ptr, T_LONG_INT *range_ptr)
 {
-    long int range = 0;
-    long int start = 2;
+    T_LONG_INT range = 0;
+    T_LONG_INT start = 2;
     
     if(n < numprocs)
     {
@@ -119,11 +122,11 @@ void range_reduce(long int n, long int *start_ptr, long int *range_ptr)
 
 }
 
-long double monte_carlo_slice(double min, double max, t_func func, long int samples)
+T_LONG_DOUBLE monte_carlo_slice(double min, double max, t_func func, T_LONG_INT samples)
 {
 
-    long int i=0;
-    long double sum = 0.0;
+    T_LONG_INT i=0;
+    T_LONG_DOUBLE sum = 0.0;
     double x;
     while(i<samples)
     {
