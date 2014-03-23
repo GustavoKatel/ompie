@@ -64,13 +64,15 @@ int main(int argc, char *argv[])
     starttime = MPI_Wtime();
    
     // sum_per_rank = monte_carlo_slice(min, max, linear, samples_per_rank);
-    sum_per_rank = monte_carlo_slice(min, max, linear2, samples_per_rank);
-    // sum_per_rank = monte_carlo_slice(min, max, cubic_plus_quad, samples_per_rank);
-   
+    // sum_per_rank = monte_carlo_slice(min, max, linear2, samples_per_rank);
+    sum_per_rank = monte_carlo_slice(min, max, cubic_plus_quad, samples_per_rank);
+
+    // printf("[%d] sum_per_rank: %Le\n", myid, sum_per_rank); 
+  
     MPI_Allreduce(&sum_per_rank, &sum_global, 1, MPI_LONG_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
     // reduce?
-    result = sum_global / samples;
+    result = ( max - min  ) * ( sum_global / samples );
    
     endtime   = MPI_Wtime();
 
@@ -125,6 +127,8 @@ long double monte_carlo_slice(double min, double max, t_func func, long int samp
         x = uniform(min, max);
         sum += func(x);
 
+//        printf("x: %f, func: %f\n", x, func(x));
+
         i+=1;
     }
 
@@ -134,6 +138,7 @@ long double monte_carlo_slice(double min, double max, t_func func, long int samp
 
 double uniform(double a, double b)
 {
+    srand (time(NULL)*rand());
     return rand() / (RAND_MAX + 1.0) * (b - a) + a;
 }
 
