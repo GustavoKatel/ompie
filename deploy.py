@@ -18,7 +18,7 @@ def deploy(user, prog):
             prog_name = prog.split("/")[-1:][0]
         else:
             prog_name = prog
-        os.system( "ssh %s@%s mpicc %s -o %s" % ( user, host, prog_name, prog_name.replace(".c", ".out")  ) )
+        os.system( "ssh %s@%s \"mkdir build 2>/dev/null && mpicc %s -o build/%s\"" % ( user, host, prog_name, prog_name.replace(".c", ".out")  ) )
     
 
 if __name__=="__main__":
