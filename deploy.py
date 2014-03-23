@@ -9,12 +9,18 @@ def deploy(user, prog):
 
     for host in hosts:
         host = host[:-1]
+
+        if " " in host:
+            host = host.split(" ")[0]
+            host = host.strip()
+
         if host == "localhost":
             continue
+
         print "Target: %s" % host
         os.system( "scp %s %s@%s:/home/%s" % (prog, user, host, user) )
 
-        if len(prog.split("/"))>0:
+        if len(prog.split("/"))>1:
             prog_name = prog.split("/")[-1:][0]
         else:
             prog_name = prog

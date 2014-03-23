@@ -133,8 +133,6 @@ T_LONG_DOUBLE monte_carlo_slice(double min, double max, t_func func, T_LONG_INT 
         x = uniform(min, max);
         sum += func(x);
 
-//        printf("x: %f, func: %f\n", x, func(x));
-
         i+=1;
     }
 
