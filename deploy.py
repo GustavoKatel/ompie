@@ -13,11 +13,21 @@ def deploy(user, prog):
             continue
         print "Target: %s" % host
         os.system( "scp %s %s@%s:/home/%s" % (prog, user, host, user) )
-        os.system( "ssh %s@%s mpicc %s -o %s" % ( user, host, prog, prog.replace(".c", "")  ) )
+
+        if len(prog.split("/"))>0:
+            prog_name = prog.split("/")[-1:][0]
+        else:
+            prog_name = prog
+        os.system( "ssh %s@%s mpicc %s -o %s" % ( user, host, prog_name, prog_name.replace(".c", ".out")  ) )
     
-    os.system( "mpicc %s -o %s" % ( prog, prog.replace(".c", "")  ) )
 
 if __name__=="__main__":
+
+    if len(sys.argv)<3:
+        print "Usage: python deploy.py USER PROG_NAME"
+        sys.exit(1)
+
     user = sys.argv[1]
     prog = sys.argv[2]
+
     deploy(user, prog)

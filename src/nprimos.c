@@ -84,7 +84,8 @@ int dividers(int n)
 
     start = range * myid + 1;
 
-    for(int i = start; i < (start + range); i++)
+    int i;
+    for(i = start; i < (start + range); i++)
         if((i > 1)&&(i < n)&&(n % i == 0))
             count++;
 
