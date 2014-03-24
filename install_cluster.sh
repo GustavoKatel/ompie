@@ -6,13 +6,10 @@ apt-get install libopenmpi-dev openmpi-bin git
 echo "Criando usuários"
 adduser ompi
 
-echo "Entrar como usuário ompi"
-su ompi
-
 cd /home/ompi
 
 echo "Baixando código"
-git clone https://github.com/GustavoKatel/ompie.git .
+git clone https://github.com/GustavoKatel/ompie.git
 
 echo "Autorizando via ssh"
 mkdir .ssh

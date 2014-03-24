@@ -18,13 +18,7 @@ def deploy(user, prog):
             continue
 
         print "Target: %s" % host
-        os.system( "scp %s %s@%s:/home/%s" % (prog, user, host, user) )
-
-        if len(prog.split("/"))>1:
-            prog_name = prog.split("/")[-1:][0]
-        else:
-            prog_name = prog
-        os.system( "ssh %s@%s \"mkdir build 2>/dev/null && mpicc %s -o build/%s\"" % ( user, host, prog_name, prog_name.replace(".c", ".out")  ) )
+        os.system( "ssh %s@%s \"cd ompie && git pull origin master && make\" " % ( user, host ) )
     
 
 if __name__=="__main__":
