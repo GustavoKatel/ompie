@@ -82,10 +82,8 @@ int main(int argc, char *argv[])
     if(!myid)
     {
         printf("Resultado: %lf\n", result);
-    }
-
-    if(!myid)
         printf("That took %f seconds\n",endtime-starttime);
+    }
 
     // wait all ranks here
     MPI_Barrier(MPI_COMM_WORLD);
